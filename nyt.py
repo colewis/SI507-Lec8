@@ -4,6 +4,7 @@ import requests
 import nytcache
 
 
+
 # gets stories from a particular section of NY times
 def get_stories(section):
     baseurl = 'https://api.nytimes.com/svc/topstories/v2/'

@@ -9,6 +9,14 @@ import json
 
 
 
+from datetime import datetime
+
+now = datetime.now()
+sec_since_epoch = now.timestamp()
+
+
+
+
 
 # on startup, try to load the cache from file
 CACHE_FNAME = 'cache_file_name.json'
@@ -42,15 +50,15 @@ def make_request_using_cache(baseurl, params):
     ## first, look in the cache to see if we already have this data
 
     ## first, look in the cache to see if we already have this data
-    if unique_ident in CACHE_DICTION:
-        print("Getting cached data...")
-        return CACHE_DICTION[unique_ident]
-
-
     #if unique_ident in CACHE_DICTION:
-    #    if is_fresh(CACHE_DICTION[unique_ident]): #### THIS IS NEW
-    #        print("Getting cached data...")
-    #        return CACHE_DICTION[unique_ident]
+    #    print("Getting cached data...")
+    #    return CACHE_DICTION[unique_ident]
+
+
+    if unique_ident in CACHE_DICTION:
+        if is_fresh(CACHE_DICTION[unique_ident]): #### THIS IS NEW
+            print("Getting cached data...")
+            return CACHE_DICTION[unique_ident]
 
     ## if not, fetch the data afresh, add it to the cache,
     ## then write the cache to file
@@ -60,14 +68,19 @@ def make_request_using_cache(baseurl, params):
         resp = requests.get(baseurl, params)
         CACHE_DICTION[unique_ident] = json.loads(resp.text)
         ### THE NEXT LINE IS NEW
-        #CACHE_DICTION[unique_ident]['cache_timestamp'] = datetime.now().timestamp()
-        ###we didn't get here in lecture
+        CACHE_DICTION[unique_ident]['cache_timestamp'] = datetime.now().timestamp()
         dumped_json_cache = json.dumps(CACHE_DICTION)
         fw = open(CACHE_FNAME,"w")
         fw.write(dumped_json_cache)
         fw.close() # Close the open file
         return CACHE_DICTION[unique_ident]
 
+MAX_STALENESS = 30 ## 30 seconds--only for lecture demo!
+def is_fresh(cache_entry):
+    now = datetime.now().timestamp()
+    #return cache_entry.keys()
+    staleness = now - cache_entry['cache_timestamp']
+    return staleness < MAX_STALENESS
 
 # gets stories from a particular section of NY times
 def get_stories(section):
