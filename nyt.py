@@ -17,6 +17,7 @@ def get_headlines(nyt_results_dict):
     return headlines
 
 story_list_json = get_stories('science')
+#print(story_list_json)
 headlines = get_headlines(story_list_json)
 for h in headlines:
     print(h)
