@@ -7,6 +7,9 @@ import requests
 import requests
 import json
 
+
+
+
 # on startup, try to load the cache from file
 CACHE_FNAME = 'cache_file_name.json'
 try:
@@ -37,9 +40,17 @@ def make_request_using_cache(baseurl, params):
     unique_ident = params_unique_combination(baseurl,params)
 
     ## first, look in the cache to see if we already have this data
+
+    ## first, look in the cache to see if we already have this data
     if unique_ident in CACHE_DICTION:
         print("Getting cached data...")
         return CACHE_DICTION[unique_ident]
+
+
+    #if unique_ident in CACHE_DICTION:
+    #    if is_fresh(CACHE_DICTION[unique_ident]): #### THIS IS NEW
+    #        print("Getting cached data...")
+    #        return CACHE_DICTION[unique_ident]
 
     ## if not, fetch the data afresh, add it to the cache,
     ## then write the cache to file
@@ -48,6 +59,9 @@ def make_request_using_cache(baseurl, params):
         # Make the request and cache the new data
         resp = requests.get(baseurl, params)
         CACHE_DICTION[unique_ident] = json.loads(resp.text)
+        ### THE NEXT LINE IS NEW
+        #CACHE_DICTION[unique_ident]['cache_timestamp'] = datetime.now().timestamp()
+        ###we didn't get here in lecture
         dumped_json_cache = json.dumps(CACHE_DICTION)
         fw = open(CACHE_FNAME,"w")
         fw.write(dumped_json_cache)

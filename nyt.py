@@ -1,13 +1,15 @@
 #ny-simple.py
 from secrets import *
 import requests
+import nytcache
+
 
 # gets stories from a particular section of NY times
 def get_stories(section):
     baseurl = 'https://api.nytimes.com/svc/topstories/v2/'
     extendedurl = baseurl + section + '.json'
     params={'api-key': nyt_key}
-    return requests.get(extendedurl, params).json()
+    return nytcache.make_request_using_cache(extendedurl, params)
 
 def get_headlines(nyt_results_dict):
     results = nyt_results_dict['results']
